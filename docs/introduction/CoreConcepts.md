@@ -1,33 +1,32 @@
 # Основные понятия
 
-Imagine your app’s state is described as a plain object. For example, the state of a todo app might look like this:
-
+Представьте, что состояние (state) приложения описан в виде простого объекта. Например, состояние приложения todo может выглядеть следующим образом:
 ```js
 {
   todos: [{
-    text: 'Eat food',
+    text: 'Съесть вкусняшку',
     completed: true
   }, {
-    text: 'Exercise',
+    text: 'Пойти в спортзал',
     completed: false
   }],
   visibilityFilter: 'SHOW_COMPLETED'
 }
 ```
 
-This object is like a “model” except that there are no setters. This is so that different parts of the code can’t change the state arbitrarily, causing hard-to-reproduce bugs.
+Этот объект похож на "модель", с тем исключением, что в нём нет сеттеров. Это сделано для того, чтобы разные части кода не могли произвольно менять состояние, вызывая тем самым баги, которые сложно воспроизвести.
 
-To change something in the state, you need to dispatch an action. An action is a plain JavaScript object (notice how we don’t introduce any magic?) that describes what happened. Here are a few example actions:
-
+Чтобы поменять что-то в состоянии нужно отправить действие (to dispatch an action). Действие - это обычный объект JS (заметьте - никакой магии!), который описывает, что изменилось. Вот несколько примеров таких действий: 
 ```js
-{ type: 'ADD_TODO', text: 'Go to swimming pool' }
+{ type: 'ADD_TODO', text: 'Сходить в бассейн' }
 { type: 'TOGGLE_TODO', index: 1 }
 { type: 'SET_VISIBILITY_FILTER', filter: 'SHOW_ALL' }
 ```
 
-Enforcing that every change is described as an action lets us have a clear understanding of what’s going on in the app. If something changed, we know why it changed. Actions are like breadcrumbs of what has happened.
-Finally, to tie state and actions together, we write a function called a reducer. Again, nothing magical about it—it’s just a function that takes state and action as arguments, and returns the next state of the app.
-It would be hard to write such a function for a big app, so we write smaller functions managing parts of the state:
+Если сделать так, что каждое изменение описывается действием, это позволит нам чётко понимать, что происходит в приложении. Если что-то изменилось - мы знаем, почему так произошло.
+Действия это как хлебные крошки, которые помогают отследить, что произошло. Чтобы подружить состояние с действиями, мы пишем специальную функцию, которая называется редьюсер (reducer). 
+Опять же - никакой магии! Редьюсер - это всего лишь функция, которая принимает в качестве аргументов состояние и действие и возвращает обновленное состояние приложения.
+Писать редьюсеры для больших и сложных приложений было бы сложным занятием, поэтому, мы делаем несколько маленьких функций, которые управляют не всем состоянием в целом, а отдельными его частями:
 
 ```js
 function visibilityFilter(state = 'SHOW_ALL', action) {
@@ -54,8 +53,7 @@ function todos(state = [], action) {
 }
 ```
 
-And we write another reducer that manages the complete state of our app by calling those two reducers for the corresponding state keys:
-
+А затем мы пишем еще один редьюсер, который управляет состоянием в целом, вызывая те два редьюсера, созданных для соответствующих частей общего состояния:
 ```js
 function todoApp(state = {}, action) {
   return {
@@ -65,4 +63,4 @@ function todoApp(state = {}, action) {
 }
 ```
 
-This is basically the whole idea of Redux. Note that we haven’t used any Redux APIs. It comes with a few utilities to facilitate this pattern, but the main idea is that you describe how your state is updated over time in response to action objects, and 90% of the code you write is just plain JavaScript, with no use of Redux itself, its APIs, or any magic.
+Собственно, в этом заключается вся суть Redux. Заметьте, что в примерах выше не использовалось Redux API. В нём есть несколько утилит для работы с описанными выше паттернами, но главная идея в том, что вы описываете, каким образом нужно обновлять состояние в ответ на объекты-действия. 90% кода, который вы будете писать является чистым JavaScript без использования Redux, его API или колдовства.
